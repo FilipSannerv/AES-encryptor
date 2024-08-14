@@ -73,7 +73,6 @@ unsigned char galois_3[256] = {
 };
 
 unsigned char prev_expanded_key[176] = {0};
-
 unsigned char prev_key[16] = {0};
 
 // Shift 1 byte to the left 
@@ -191,7 +190,7 @@ void mixColumns(unsigned char *block) {
       column[j] = block[(j*4)+i];
     }
 
-    //----------------------- Mix the column --------------------------------
+    //----------------------- Mix the column -------------------------------
 
     unsigned char temp[4];
     // // Copy current column into temp
@@ -206,7 +205,7 @@ void mixColumns(unsigned char *block) {
     column[2] = temp[0] ^ temp[1] ^ galois_2[temp[2]] ^ galois_3[temp[3]];
     column[3] = galois_3[temp[0]] ^ temp[1] ^ temp[2] ^ galois_2[temp[3]];
 
-    //--------------------------------------------------------------------------
+    //-----------------------------------------------------------------------
 
     // Put the mixed values back into the block
     for (j = 0; j < 4; j++)
@@ -215,6 +214,7 @@ void mixColumns(unsigned char *block) {
     }
   }
 }
+
 
 // Create round key from expanded key, then apply round key to the block
 void addRoundKey(unsigned char *block, unsigned char *expanded_key, unsigned char *round_key) {
@@ -247,7 +247,6 @@ void aesEncrypt(unsigned char *input, unsigned char *ciphertext, unsigned char *
     memcpy(expanded_key, prev_expanded_key, 176);
   }
 
-
   //16 byte block to hold plaintext
   unsigned char block[16];
   memset(block, 0, 16);
@@ -266,7 +265,6 @@ void aesEncrypt(unsigned char *input, unsigned char *ciphertext, unsigned char *
       block[(j*4)+i] = input[(i*4)+j];
     }
   }
-
   //----------------- Encrypt block --------------------
 
   // 1. Create and add initial round key to block
@@ -304,29 +302,26 @@ int main(int argc, char *argv[])
   memset(key, 0, 16);
   // Read 128-bit encryption key
   fread(key, 1, 16, stdin);
-
   unsigned char ciphertext[16];
-
   unsigned char plaintext[16];
   memset(plaintext, 0, 16);
 
   // Read 16 bytes (one block) at a time from stdin
   while (fread(plaintext, 1, 16, stdin) == 16)
   {
-    //Clear ciphertext
+    // Clear ciphertext
     memset(ciphertext, 0, 16);
-    //Encrypt plaintext
+    // Encrypt plaintext
     aesEncrypt(plaintext, ciphertext, key);
-    //Print ciphertext in bytes
+    // Print ciphertext in bytes
     fwrite(ciphertext, 1 , 16, stdout);
-    //Clear plaintext
+    // Clear plaintext
     memset(plaintext, 0, 16);
+    // Print ciphertext in hex:
+    // for (int i = 0; i < 16; i++)
+    // {
+    //   printf("%02X", ciphertext[i]);
+    // }
   }
   return 0;
 }
-
-    // Print in hex
-    // for (int i = 0; i < 16; i++)
-    // {
-    //   //printf("%02X", ciphertext[i]);
-    // }
