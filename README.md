@@ -1,4 +1,4 @@
-# AES-128 Encryption algorithm implementation in C.
+# AES-128 algorithm implementation in C.
 
 Reads key to use from stdin, followed by one or more blocks to encrypt using the key.
 
